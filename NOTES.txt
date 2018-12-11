@@ -1,0 +1,22 @@
+0. pip install keras; pip install tensorflow
+
+1. Use imagemagick to rescale all images. Images smaller than 299x299
+are centered on a white background, larger images are scaled down to
+fit.  This preserves size for small images.
+
+  (script: convert-images-sh)
+
+2. Select classes to learn (more than xxx objects)
+
+
+
+3. Run training
+
+   (create-model.py, train.py)
+
+4. Test performance
+
+a) confusion matrix
+b) error examples
+
+
