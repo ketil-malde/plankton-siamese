@@ -9,10 +9,10 @@ shopt -s failglob
 BASE=ZooScanSet/imgs
 OUT=data
 
-for dir in $(ls $BASE); do
-   echo $dir
-   mkdir -p $OUT/$dir
-   ls $BASE/$dir | while read f; do 
-          convert -resize 299x299 $BASE/$dir/$f -background white -gravity center -extent 299x299 $OUT/$dir/$f
+ls "$BASE" | tail -n +14 | while read dir; do
+   echo "$dir"
+   mkdir -p "$OUT/$dir"
+   ls "$BASE/$dir" | while read f; do 
+          convert -resize 299x299 "$BASE/$dir/$f" -background white -gravity center -extent 299x299 "$OUT/$dir/$f"
    done
 done

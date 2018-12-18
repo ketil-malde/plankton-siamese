@@ -1,6 +1,6 @@
 # The imported generators expect to find training data in data/train
 # and validation data in data/validation
-from generator import train_generator, validation_generator
+from generators import train_generator, validation_generator
 
 from keras.models import load_model
 from keras.callbacks import CSVLogger
@@ -30,11 +30,6 @@ def train_step(i):
         validation_data=validation_generator, validation_steps=500)
     model.save(save_name(i))
 
-
-# we use SGD with a low learning rate
-model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
-              loss='categorical_crossentropy',
-              metrics=['mse', 'accuracy'])
 
 for i in range(last+1, last+10):
         print('Starting iteration '+str(i))
