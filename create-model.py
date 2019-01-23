@@ -1,6 +1,6 @@
 from keras.applications.inception_v3 import InceptionV3
 from keras.models import Sequential, Model, Input, load_model
-from keras.layers import Dense, Activation, Flatten, GlobalAveragePooling2D
+from keras.layers import Dense, Activation, Flatten, GlobalAveragePooling2D, Concatenate
 from keras.optimizers import SGD
 from keras import backend as K
 
@@ -37,33 +37,32 @@ def create_trivial():
 # bitvector = Dense(128, activation='sigmoid')(tmp)
 # base_model = Model(inputs=old_model.input, outputs=bitvector)
 
-base_model = create_trivial()
+base_model = create_base_network(in_dim)
 
-base_model.summary()
+# base_model.summary()
 
-in_dim = 1024
-anc_in = Input(shape=(None,in_dim))
-pos_in = Input(shape=(None,in_dim))
-neg_in = Input(shape=(None,in_dim))
+anc_in = Input(shape=in_dim)
+pos_in = Input(shape=in_dim)
+neg_in = Input(shape=in_dim)
 
 anc_out = base_model(anc_in)
 pos_out = base_model(pos_in)
 neg_out = base_model(neg_in)
 
-out_vector = [anc_out, pos_out, neg_out]
+out_vector = Concatenate()([anc_out, pos_out, neg_out])
 
 model = Model(inputs=[anc_in, pos_in, neg_in], outputs=out_vector)
 
-model.summary()
+# model.summary()
 
 # Basic triplet loss?
 # Note, this learns nothing when dneg>dpos+alpha
 def std_triplet_loss(y_true, y_pred, alpha=5):
     # split the prediction vector
 
-    anchor = y_pred[0]
-    pos = y_pred[1]
-    neg = y_pred[2]
+    anchor = y_pred[:,0:128]
+    pos = y_pred[:,128:256]
+    neg = y_pred[:,256:384]
 
     pos_dist = K.sum(K.square(anchor-pos),axis=1)
     neg_dist = K.sum(K.square(anchor-neg),axis=1)
