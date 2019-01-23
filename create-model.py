@@ -22,17 +22,22 @@ def create_base_network(input_dim):
     bitvector = Dense(128, activation='sigmoid')(tmp)
     return Model(inputs=base_model.input, outputs=bitvector)
 
+
+def create_trivial():
+    base_model = Sequential()
+    # base_model.add(Flatten(input_shape=in_dim))
+    base_model.add(Dense(256, input_dim = 1024))
+    base_model.add(Activation('relu'))
+    base_model.add(Dense(128))
+    base_model.add(Activation('sigmoid'))
+    return base_model
+
 # old_model = load_model('models/pretrained.model')
 ## cut last layer
 # bitvector = Dense(128, activation='sigmoid')(tmp)
 # base_model = Model(inputs=old_model.input, outputs=bitvector)
 
-base_model = Sequential()
-# base_model.add(Flatten(input_shape=in_dim))
-base_model.add(Dense(256, input_dim = 1024))
-base_model.add(Activation('relu'))
-base_model.add(Dense(128))
-base_model.add(Activation('sigmoid'))
+base_model = create_trivial()
 
 base_model.summary()
 
