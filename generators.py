@@ -47,6 +47,9 @@ def mk_triplet():
 
 print(mk_triplet())
 
+from PIL import Image
+import numpy as np
+
 def triplet_generator(batch_size):
     ys = []
     ans = []
@@ -55,13 +58,16 @@ def triplet_generator(batch_size):
     for i in range(0,batch_size):
         pc,nc,anc,pos,neg = mk_triplet()
         ys.append((pc,nc))
-        ans.append(Image.open(anc))
-        pss.append(Image.open(pos))
-        ngs.append(Image.open(neg))
-    # todo: scaling, augmentation
+        ans.append(np.array(Image.open(anc))/256)
+        pss.append(np.array(Image.open(pos))/256)
+        ngs.append(np.array(Image.open(neg))/256)
+    # todo: augmentation
 
-    y = np.fromList(ys)
-    a = np.fromList(ans)
-    p = np.fromList(pss)
-    n = np.fromList(ngs)
-    yield(y,a,p,n)
+    a = np.asarray(ans)
+    p = np.asarray(pss)
+    n = np.asarray(ngs)
+
+    yield(ys,a,p,n)
+
+# for x in triplet_generator(1):
+#    print(x)
