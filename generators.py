@@ -1,7 +1,9 @@
 import os
 import random
-classes = os.listdir('train')
-images = [os.listdir(os.path.join('train',x)) for x in classes]
+import config
+
+classes = os.listdir(train_dir)
+images = [os.listdir(os.path.join(train_dir,x)) for x in classes]
 
 def mk_triplet():
     # pick random positive class
@@ -15,9 +17,9 @@ def mk_triplet():
     # print('Negative: ',neg_class,classes[neg_class])
 
     # pick two random images from class
-    anchor = os.path.join('train',classes[pos_class],random.choice(images[pos_class]))
-    pos = os.path.join('train',classes[pos_class],random.choice(images[pos_class]))
-    neg = os.path.join('train',classes[neg_class],random.choice(images[neg_class]))
+    anchor = os.path.join(train_dir,classes[pos_class],random.choice(images[pos_class]))
+    pos = os.path.join(train_dir,classes[pos_class],random.choice(images[pos_class]))
+    neg = os.path.join(train_dir,classes[neg_class],random.choice(images[neg_class]))
 
     # print('Selection:',anchor,pos,neg)
     return(pos_class,neg_class,anchor,pos,neg)
