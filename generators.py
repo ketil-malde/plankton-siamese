@@ -25,6 +25,18 @@ def mk_triplet():
 from PIL import Image
 import numpy as np
 
+
+# Scale to image size, paste on white background
+def paste(img):
+    i = np.ones((299,299,3))
+    (x,y,z) = img.shape
+    start_x = int((299-x)/2)
+    end_x   = start_x + x
+    start_y = int((299-y)/2)
+    end_y   = start_y + y
+    i[start_x:end_x,start_y:end_y,:] = img
+    return i
+
 def triplet_generator(batch_size):
     ys = []
     ans = []
@@ -33,9 +45,13 @@ def triplet_generator(batch_size):
     for i in range(0,batch_size):
         pc,nc,anc,pos,neg = mk_triplet()
         ys.append((pc,nc))
-        ans.append(np.array(Image.open(anc))/256)
-        pss.append(np.array(Image.open(pos))/256)
-        ngs.append(np.array(Image.open(neg))/256)
+        a_img = np.array(Image.open(anc))/256
+        p_img = np.array(Image.open(pos))/256
+        n_img = np.array(Image.open(neg))/256
+        # Todo: paste it into the middle of a img_size'd canvas
+        ans.append(paste(a_img))
+        pss.append(paste(p_img))
+        ngs.append(paste(n_img))
     # todo: augmentation
 
     a = np.asarray(ans)
@@ -43,6 +59,8 @@ def triplet_generator(batch_size):
     n = np.asarray(ngs)
     y = np.asarray(ys)
 
-    # print("a:", a.shape, "p:", p.shape, "n:", n.shape, "y:", y.shape)
-    
     yield [a,p,n], y
+
+# Testing:    
+# for [a,p,n], y in triplet_generator(2):
+#    print("a:", a.shape, "p:", p.shape, "n:", n.shape, "y:", y.shape)
