@@ -32,12 +32,10 @@ def create_trivial():
     base_model.add(Activation('sigmoid'))
     return base_model
 
-# old_model = load_model('models/pretrained.model')
-## cut last layer
-# bitvector = Dense(128, activation='sigmoid')(tmp)
-# base_model = Model(inputs=old_model.input, outputs=bitvector)
-
 base_model = create_base_network(in_dim)
+
+# in_dim = (1024,)
+# base_model = create_trivial()
 
 # base_model.summary()
 
