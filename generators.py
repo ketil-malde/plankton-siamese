@@ -1,26 +1,3 @@
-# from keras.preprocessing.image import ImageDataGenerator
-
-# train_datagen = ImageDataGenerator(
-#         rescale=1./255,
-#         shear_range=0.2,
-#         zoom_range=0.2,
-#         horizontal_flip=True,
-#         vertical_flip=True)
-
-# test_datagen = ImageDataGenerator(rescale=1./255)
-
-# train_generator = train_datagen.flow_from_directory(
-#         'train',
-#         target_size=(299, 299),
-#         batch_size=32,
-#         class_mode='categorical')
-
-# validation_generator = test_datagen.flow_from_directory(
-#         'validate',
-#         target_size=(299, 299),
-#         batch_size=32,
-#         class_mode='categorical')
-
 import os
 import random
 classes = os.listdir('train')
@@ -53,7 +30,7 @@ def triplet_generator(batch_size):
     ans = []
     pss = []
     ngs = []
-    for i in range(0,batch_size-1):
+    for i in range(0,batch_size):
         pc,nc,anc,pos,neg = mk_triplet()
         ys.append((pc,nc))
         ans.append(np.array(Image.open(anc))/256)
@@ -64,10 +41,8 @@ def triplet_generator(batch_size):
     a = np.asarray(ans)
     p = np.asarray(pss)
     n = np.asarray(ngs)
+    y = np.asarray(ys)
 
-    yield(ys,a,p,n)
-
-for x in triplet_generator(32):
-    #    print(x)
-    print()
+    # print("a:", a.shape, "p:", p.shape, "n:", n.shape, "y:", y.shape)
     
+    yield [a,p,n], y
