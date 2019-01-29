@@ -8,6 +8,8 @@ from keras.optimizers import SGD
 
 from create_model import model
 
+from config import batch_size
+
 last = 0
 
 def save_name(i):
@@ -18,9 +20,9 @@ logger = CSVLogger('train.log', append=True, separator='       ')
 
 def train_step(i):
     model.fit_generator(
-        triplet_generator(1), steps_per_epoch=1000, epochs=10,
+        triplet_generator(batch_size), steps_per_epoch=1000, epochs=10,
         callbacks=[logger],
-        validation_data=triplet_generator(1), validation_steps=500)
+        validation_data=triplet_generator(batch_size), validation_steps=500)
     model.save(save_name(i))
 
 
