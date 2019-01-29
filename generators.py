@@ -1,6 +1,6 @@
 import os
 import random
-import config
+from config import train_dir
 
 classes = os.listdir(train_dir)
 images = [os.listdir(os.path.join(train_dir,x)) for x in classes]
@@ -31,6 +31,7 @@ import numpy as np
 # Scale to image size, paste on white background
 def paste(img):
     i = np.ones((299,299,3))
+    # NB: Mono images lack the third dimension and will fail here:
     (x,y,z) = img.shape
     start_x = int((299-x)/2)
     end_x   = start_x + x
@@ -40,29 +41,33 @@ def paste(img):
     return i
 
 def triplet_generator(batch_size):
-    ys = []
-    ans = []
-    pss = []
-    ngs = []
-    for i in range(0,batch_size):
-        pc,nc,anc,pos,neg = mk_triplet()
-        ys.append((pc,nc))
-        a_img = np.array(Image.open(anc))/256
-        p_img = np.array(Image.open(pos))/256
-        n_img = np.array(Image.open(neg))/256
-        # Todo: paste it into the middle of a img_size'd canvas
-        ans.append(paste(a_img))
-        pss.append(paste(p_img))
-        ngs.append(paste(n_img))
-    # todo: augmentation
+    while True:
+        ys = []
+        ans = []
+        pss = []
+        ngs = []
+        for i in range(0,batch_size):
+            pc,nc,anc,pos,neg = mk_triplet()
+            ys.append((pc,nc))
+            a_img = np.array(Image.open(anc))/256
+            p_img = np.array(Image.open(pos))/256
+            n_img = np.array(Image.open(neg))/256
+            # Todo: paste it into the middle of a img_size'd canvas
+            ans.append(paste(a_img))
+            pss.append(paste(p_img))
+            ngs.append(paste(n_img))
+            # todo: augmentation
 
-    a = np.asarray(ans)
-    p = np.asarray(pss)
-    n = np.asarray(ngs)
-    y = np.asarray(ys)
+        a = np.asarray(ans)
+        p = np.asarray(pss)
+        n = np.asarray(ngs)
+        y = np.asarray(ys)
 
-    yield [a,p,n], y
+        yield [a,p,n], y
 
 # Testing:    
-# for [a,p,n], y in triplet_generator(2):
-#    print("a:", a.shape, "p:", p.shape, "n:", n.shape, "y:", y.shape)
+g = triplet_generator(32)
+for x in range(0,4):
+    [a,p,n], y = next(g)
+    print(x, "a:", a.shape, "p:", p.shape, "n:", n.shape, "y:", y.shape)
+    
