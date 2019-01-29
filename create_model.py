@@ -23,9 +23,9 @@ def create_base_network(input_dim):
     return Model(inputs=base_model.input, outputs=bitvector)
 
 
+# This is just for testing - Inception takes forever to set up in Tensorflow
 def create_trivial():
     base_model = Sequential()
-    # base_model.add(Flatten(input_shape=in_dim))
     base_model.add(Dense(256, input_dim = 1024))
     base_model.add(Activation('relu'))
     base_model.add(Dense(128))
