@@ -16,7 +16,7 @@ def save_name(i):
     return ('models/epoch_'+str(i)+'.model')
 
 # Use log to file
-logger = CSVLogger('train.log', append=True, separator='       ')
+logger = CSVLogger('train.log', append=True, separator='\t')
 
 def train_step(i):
     model.fit_generator(
