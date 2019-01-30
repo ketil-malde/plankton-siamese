@@ -1,11 +1,11 @@
 import os
 import random
-from config import train_dir
+import config as C
 
-classes = os.listdir(train_dir)
-images = [os.listdir(os.path.join(train_dir,x)) for x in classes]
+def mk_triplet(directory):
+    classes = os.listdir(directory)
+    images = [os.listdir(os.path.join(directory,x)) for x in classes]
 
-def mk_triplet():
     # pick random positive class
     pos_class = random.randint(0,len(classes)-1)
     # print('Anchor: ',pos_class,classes[pos_class])
@@ -17,16 +17,15 @@ def mk_triplet():
     # print('Negative: ',neg_class,classes[neg_class])
 
     # pick two random images from class
-    anchor = os.path.join(train_dir,classes[pos_class],random.choice(images[pos_class]))
-    pos = os.path.join(train_dir,classes[pos_class],random.choice(images[pos_class]))
-    neg = os.path.join(train_dir,classes[neg_class],random.choice(images[neg_class]))
+    anchor = os.path.join(directory, classes[pos_class], random.choice(images[pos_class]))
+    pos    = os.path.join(directory, classes[pos_class], random.choice(images[pos_class]))
+    neg    = os.path.join(directory, classes[neg_class], random.choice(images[neg_class]))
 
     # print('Selection:',anchor,pos,neg)
     return(pos_class,neg_class,anchor,pos,neg)
 
 from PIL import Image
 import numpy as np
-
 
 # Scale to image size, paste on white background
 def paste(img):
@@ -40,14 +39,14 @@ def paste(img):
     i[start_x:end_x,start_y:end_y,:] = img
     return i
 
-def triplet_generator(batch_size):
+def triplet_generator(batch_size,cache_size,directory):
     while True:
         ys = []
         ans = []
         pss = []
         ngs = []
         for i in range(0,batch_size):
-            pc,nc,anc,pos,neg = mk_triplet()
+            pc,nc,anc,pos,neg = mk_triplet(directory)
             ys.append((pc,nc))
             a_img = np.array(Image.open(anc))/256
             p_img = np.array(Image.open(pos))/256
@@ -66,7 +65,7 @@ def triplet_generator(batch_size):
         yield [a,p,n], y
 
 # Testing:    
-g = triplet_generator(32)
+g = triplet_generator(4, None, C.train_dir)
 for x in range(0,4):
     [a,p,n], y = next(g)
     print(x, "a:", a.shape, "p:", p.shape, "n:", n.shape, "y:", y.shape)
