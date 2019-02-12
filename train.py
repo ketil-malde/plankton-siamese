@@ -2,8 +2,9 @@
 # and validation data in data/validation
 from keras.models import load_model
 from keras.callbacks import CSVLogger
+from keras.optimizers import SGD
 
-from create_model import model
+from create_model import create_base_network, in_dim, tripletize, std_triplet_loss
 from generators import triplet_generator
 
 import config as C
@@ -16,14 +17,18 @@ def save_name(i):
 # Use log to file
 logger = CSVLogger('train.log', append=True, separator='\t')
 
-def train_step(i):
+def train_step():
     model.fit_generator(
-        triplet_generator(batch_size, None, C.train_dir), steps_per_epoch=1000, epochs=10,
+        triplet_generator(C.batch_size, None, C.train_dir), steps_per_epoch=1000, epochs=10,
         callbacks=[logger],
-        validation_data=triplet_generator(batch_size, None, C.val_dir), validation_steps=500)
-    model.save(save_name(i))
+        validation_data=triplet_generator(C.batch_size, None, C.val_dir), validation_steps=100)
 
+base_model = create_base_network(in_dim)
+model = tripletize(base_model)
+model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
+              loss=std_triplet_loss)
 
 for i in range(last+1, last+10):
         print('Starting iteration '+str(i))
-        train_step(i)
+        train_step()
+        base_model.save(save_name(i))

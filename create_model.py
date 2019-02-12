@@ -1,7 +1,6 @@
 from keras.applications.inception_v3 import InceptionV3
 from keras.models import Sequential, Model, Input, load_model
 from keras.layers import Dense, Activation, Flatten, GlobalAveragePooling2D, Concatenate
-from keras.optimizers import SGD
 from keras import backend as K
 
 # Load Inception minus the final prediction layer
@@ -32,26 +31,18 @@ def create_trivial():
     base_model.add(Activation('sigmoid'))
     return base_model
 
-base_model = create_base_network(in_dim)
 
-# in_dim = (1024,)
-# base_model = create_trivial()
+def tripletize(bmodel):
+    anc_in = Input(shape=in_dim)
+    pos_in = Input(shape=in_dim)
+    neg_in = Input(shape=in_dim)
 
-# base_model.summary()
+    anc_out = bmodel(anc_in)
+    pos_out = bmodel(pos_in)
+    neg_out = bmodel(neg_in)
 
-anc_in = Input(shape=in_dim)
-pos_in = Input(shape=in_dim)
-neg_in = Input(shape=in_dim)
-
-anc_out = base_model(anc_in)
-pos_out = base_model(pos_in)
-neg_out = base_model(neg_in)
-
-out_vector = Concatenate()([anc_out, pos_out, neg_out])
-
-model = Model(inputs=[anc_in, pos_in, neg_in], outputs=out_vector)
-
-# model.summary()
+    out_vector = Concatenate()([anc_out, pos_out, neg_out])
+    return Model(inputs=[anc_in, pos_in, neg_in], outputs=out_vector)
 
 # Basic triplet loss?
 # Note, this learns nothing when dneg>dpos+alpha
@@ -83,9 +74,3 @@ def geom_triplet_loss(y_true, y_pred, alpha=5):
     loss = K.maximum(basic_loss,0.0)  # should never happen
  
     return loss
-
-model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
-              loss=std_triplet_loss)
-
-# we use SGD with a low learning rate
-# model.save('models/initial.model')
