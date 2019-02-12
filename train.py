@@ -6,6 +6,7 @@ from keras.optimizers import SGD
 
 from create_model import create_base_network, in_dim, tripletize, std_triplet_loss
 from generators import triplet_generator
+from testing import run_test
 
 import config as C
 
@@ -32,3 +33,4 @@ for i in range(last+1, last+10):
         print('Starting iteration '+str(i))
         train_step()
         base_model.save(save_name(i))
+        run_test(base_model)
