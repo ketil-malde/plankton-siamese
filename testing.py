@@ -6,14 +6,14 @@ from generators import paste
 
 def class_file(model, fname):
     img = np.array(Image.open(fname))/256
-    return model.predict(paste(img))
+    return model.predict(np.expand_dims(paste(img), axis=0))
 
 # Calculate histogram of all distances from v in v1 to w in v2
 def dist_hist(v1,v2):
-    [np.linalg.norm(v-w) for v in v1 for w in v2]
+    return [np.linalg.norm(v-w) for v in v1 for w in v2]
 
 def centroid(vs):
-    x0 = np.zeroes_like(vs[0])
+    x0 = np.zeros_like(vs[0])
     for x in vs:
         x0 = np.add(x0,x)
     return x0/len(vs)
@@ -25,8 +25,9 @@ def run_test(model, tdir=C.test_dir):
     classes = os.listdir(tdir)
     res = {}
     for c in classes:
-           images = os.listdir(os.path.join(tdir,x))
-           vectors = [class_file(model, f) for f in images]
+           images = os.listdir(os.path.join(tdir,c))
+           vectors = [class_file(model, os.path.join(tdir,c,f)) for f in images]
+
            # pick the centroid image
            # pick the worst cases?
            ds = dist_hist(vectors,vectors)
