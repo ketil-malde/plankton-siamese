@@ -31,8 +31,11 @@ def run_test(model, tdir=C.test_dir):
            # pick the centroid image
            # pick the worst cases?
            ds = dist_hist(vectors,vectors)
-           print(c,'average radius:',sum(ds)/len(ds), 'worst case distance:', max(ds))
-           cent = centroid(vectors)
-           for n,ct in res:
-               print('Distance to', n,':', np.linalg.norm(cent-ct))
+           print('%s average radius: %.4f worst case distance: %.4f' % (c, sum(ds)/len(ds), max(ds)))
 
+           print('Distances:',end='')
+           cent = centroid(vectors)
+           for n in res:
+               print('%s: %.3f' % (n, np.linalg.norm(cent-res[n])), end=' ')
+           res[c]=cent
+           print()
