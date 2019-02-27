@@ -34,12 +34,13 @@ import numpy as np
 def paste(img):
     i = np.ones((299,299,3))
     # NB: Mono images lack the third dimension and will fail here:
-    (x,y,z) = img.shape
+    # (x,y,z) = img.shape
+    (x,y) = img.shape
     start_x = int((299-x)/2)
     end_x   = start_x + x
     start_y = int((299-y)/2)
     end_y   = start_y + y
-    i[start_x:end_x,start_y:end_y,:] = img
+    i[start_x:end_x,start_y:end_y,0] = img
     return i
 
 def triplet_generator(batch_size,cache_size,directory):
