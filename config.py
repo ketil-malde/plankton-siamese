@@ -1,6 +1,6 @@
 
 train_dir = 'data/train'
 val_dir   = 'data/validate'
-test_dir  = 'data/test/'
+test_dir  = 'data/test'
 
-batch_size = 16
+batch_size = 20
