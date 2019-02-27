@@ -77,3 +77,20 @@ def geom_triplet_loss(y_true, y_pred, alpha=5):
     loss = K.maximum(basic_loss,0.0)  # should never happen
  
     return loss
+
+# By placing the maximum on the loss for negative (and not the total)
+# we may still learn to pack clusters after they are acceptably separated.
+def alt_triplet_loss(alpha=5):
+    # split the prediction vector
+    def myloss(y_true, y_pred):
+        anchor = y_pred[:,0:128]
+        pos = y_pred[:,128:256]
+        neg = y_pred[:,256:384]
+
+        pos_dist = K.sum(K.square(anchor-pos),axis=1)
+        neg_dist = K.sum(K.square(anchor-neg),axis=1)
+
+        loss = pos_dist + K.maximum(alpha - neg_dist, 0.0)
+
+        return loss
+    return myloss
