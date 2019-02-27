@@ -106,20 +106,50 @@ def confusion_counts(cts):
             print(" %4d" % cts[v][w], end='')
         print()
 
-# todo: test nearest-centroid and k-nn accuracy
+# find the class and distance of the k nearest elements to tvec in refset
+def find_nearest(refset, tvec, k=1):
+    mindist = []
+    for c in refset:
+        for p in refset[c]:
+            d = dist(p,tvec)
+            if len(mindist)<k or d < max([x for x,v in mindist]):
+                mindist.append((d,c))
+                mindist.sort()
+                mindist = mindist[:k]
+    return mindist
+
+# classify data in tdir using kNN with rdir as the reference
+def knn_test(model, rdir, tdir, k=5):
+    rvecs = get_vectors(model, rdir)
+    tvecs = get_vectors(model, tdir)
+    cmx = {}
+    for x in tvecs:
+        cmx[x] = {}
+        for y in rvecs:
+            cmx[x][y] = 0
+    for c in tvecs:
+        for v in tvecs[c]:
+            xs = find_nearest(rvecs, v, k)
+            rs = [v for c,v in xs]
+            r = max(set(rs), key=rs.count)
+            # if r != c: print(xs)
+            cmx[c][r] = cmx[c][r]+1
+    return cmx
 
 # todo: PCA plots
 
 # Default test to use
 def run_test(model, tdir=C.test_dir):
     vecs = get_vectors(model,tdir)
+
 #    print('Centroid dists:')
 #    centroid_distances(vecs)
+
 #    print('Summarize:')
 #    summarize(vecs)
 
     c = count_nearest_centroid(vecs)
-    print('Accuracies:')
     accuracy_counts(c)
+
 #    print('Confusion matrix:')
 #    confusion_counts(c)
