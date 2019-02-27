@@ -44,8 +44,8 @@ def tripletize(bmodel):
     out_vector = Concatenate()([anc_out, pos_out, neg_out])
     return Model(inputs=[anc_in, pos_in, neg_in], outputs=out_vector)
 
-# Basic triplet loss?
-# Note, this learns nothing when dneg>dpos+alpha
+# Basic triplet loss.
+# Note, due to the K.maximum, this learns nothing when dneg>dpos+alpha
 def std_triplet_loss(y_true, y_pred, alpha=5):
     # split the prediction vector
 
@@ -61,6 +61,9 @@ def std_triplet_loss(y_true, y_pred, alpha=5):
  
     return loss
 
+# in retrospect, this has some problems, namely that the derivative of 1/x
+# goes quickly (quadratically) to zero as x increases.
+# I.e. the gradient disappears, and we get very slow learning.
 def geom_triplet_loss(y_true, y_pred, alpha=5):
 
     anchor = y_pred[:,0:128]
