@@ -44,8 +44,8 @@ def tripletize(bmodel):
     out_vector = Concatenate()([anc_out, pos_out, neg_out])
     return Model(inputs=[anc_in, pos_in, neg_in], outputs=out_vector)
 
-# Basic triplet loss?
-# Note, this learns nothing when dneg>dpos+alpha
+# Basic triplet loss.
+# Note, due to the K.maximum, this learns nothing when dneg>dpos+alpha
 def std_triplet_loss(y_true, y_pred, alpha=5):
     # split the prediction vector
 
@@ -61,6 +61,9 @@ def std_triplet_loss(y_true, y_pred, alpha=5):
  
     return loss
 
+# in retrospect, this has some problems, namely that the derivative of 1/x
+# goes quickly (quadratically) to zero as x increases.
+# I.e. the gradient disappears, and we get very slow learning.
 def geom_triplet_loss(y_true, y_pred, alpha=5):
 
     anchor = y_pred[:,0:128]
@@ -74,3 +77,20 @@ def geom_triplet_loss(y_true, y_pred, alpha=5):
     loss = K.maximum(basic_loss,0.0)  # should never happen
  
     return loss
+
+# By placing the maximum on the loss for negative (and not the total)
+# we may still learn to pack clusters after they are acceptably separated.
+def alt_triplet_loss(alpha=5):
+    # split the prediction vector
+    def myloss(y_true, y_pred):
+        anchor = y_pred[:,0:128]
+        pos = y_pred[:,128:256]
+        neg = y_pred[:,256:384]
+
+        pos_dist = K.sum(K.square(anchor-pos),axis=1)
+        neg_dist = K.sum(K.square(anchor-neg),axis=1)
+
+        loss = pos_dist + K.maximum(alpha - neg_dist, 0.0)
+
+        return loss
+    return myloss
