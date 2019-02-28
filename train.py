@@ -24,12 +24,16 @@ def train_step():
         callbacks=[logger],
         validation_data=triplet_generator(C.batch_size, None, C.val_dir), validation_steps=100)
 
-base_model = create_base_network(in_dim)
+if last==0:
+    base_model = create_base_network(in_dim)
+else:
+    base_model = load_model(save_name(last))
+
 model = tripletize(base_model)
 model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
               loss=std_triplet_loss)
 
-for i in range(last+1, last+10):
+for i in range(last+1, last+11):
         print('Starting iteration '+str(i))
         train_step()
         base_model.save(save_name(i))
