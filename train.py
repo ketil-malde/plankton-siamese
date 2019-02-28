@@ -41,7 +41,7 @@ else:
 
 model = tripletize(base_model)
 model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
-              loss=std_triplet_loss)
+              loss=std_triplet_loss())
 
 for i in range(last+1, last+11):
     log('Starting iteration '+str(i))
