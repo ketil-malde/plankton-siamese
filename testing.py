@@ -2,6 +2,8 @@ import config as C
 
 from PIL import Image
 import numpy as np
+import sys
+
 from generators import paste
 
 def class_file(model, fname):
@@ -41,32 +43,32 @@ def radius(c, vs, avg=True):
         return max(ds)
 
 # for backwards compatibility
-def centroid_distances(vectors):
+def centroid_distances(vectors, outfile=sys.stdout):
     # load a bunch of images, calculate outputs
     res = {}
     for c in vectors:
            ds = dist_hist(vectors[c],vectors[c])
            res[c] = centroid(vectors[c])
-           print(c.ljust(16),' average radius: %.4f worst case diameter: %.4f' % (sum(ds)/len(ds), max(ds)))
-    print('\nCentroid distances')
+           print(c.ljust(16),' average radius: %.4f worst case diameter: %.4f' % (sum(ds)/len(ds), max(ds)), file=outfile)
+    print('\nCentroid distances',file=outfile)
     for c in res:
-        print(c.ljust(16),end=': ')
+        print(c.ljust(16),end=': ', file=outfile)
         for n in res:
-            print('  %.3f' % (dist(res[c],res[n])), end='')
-        print()
+            print('  %.3f' % (dist(res[c],res[n])), end='', file=outfile)
+        print(file=outfile)
 
 # average radius and centroid distances for all test classes
-def summarize(vectors):
+def summarize(vectors, outfile=sys.stdout):
     cents = {}
     rads  = {}
     for c in vectors:
         cents[c] = centroid(vectors[c])
         rads[c] = radius(cents[c], vectors[c])
     for c in vectors:
-        print(c.ljust(16),' r=%.3f ' % rads[c], end='')
+        print(c.ljust(16),' r=%.3f ' % rads[c], end='', file=outfile)
         for n in vectors:
-            print('  %.3f' % np.linalg.norm(cents[c]-cents[n]), end='')
-        print()
+            print('  %.3f' % np.linalg.norm(cents[c]-cents[n]), end='', file=outfile)
+        print(file=outfile)
 
 # assign each input to nearest centroid and tally
 def count_nearest_centroid(vectors):
@@ -90,21 +92,21 @@ def count_nearest_centroid(vectors):
             counts[c][nearest] = counts[c][nearest] + 1 
     return counts
 
-def accuracy_counts(cts):
+def accuracy_counts(cts, outfile=sys.stdout):
     correct = 0
     total   = 0
     for v in cts:
         correct = correct + cts[v][v]
         for w in cts:
             total = total + cts[v][w]
-    print('Accuracy: %.3f' % (correct/total))
+    print('Accuracy: %.3f' % (correct/total), file=outfile)
         
-def confusion_counts(cts):
+def confusion_counts(cts, outfile=sys.stdout):
     for v in cts:
         print(v.ljust(16),end='')
         for w in cts:
-            print(" %4d" % cts[v][w], end='')
-        print()
+            print(" %4d" % cts[v][w], end='', file=outfile)
+        print(file=outfile)
 
 # find the class and distance of the k nearest elements to tvec in refset
 def find_nearest(refset, tvec, k=1):
@@ -139,7 +141,7 @@ def knn_test(model, rdir, tdir, k=5):
 # todo: PCA plots
 
 # Default test to use
-def run_test(model, tdir=C.test_dir):
+def run_test(model, tdir=C.test_dir, outfile=sys.stdout):
     vecs = get_vectors(model,tdir)
 
 #    print('Centroid dists:')
@@ -149,7 +151,7 @@ def run_test(model, tdir=C.test_dir):
 #    summarize(vecs)
 
     c = count_nearest_centroid(vecs)
-    accuracy_counts(c)
+    accuracy_counts(c, outfile=outfile)
 
 #    print('Confusion matrix:')
 #    confusion_counts(c)

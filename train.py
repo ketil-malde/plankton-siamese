@@ -33,4 +33,5 @@ for i in range(last+1, last+10):
         print('Starting iteration '+str(i))
         train_step()
         base_model.save(save_name(i))
-        run_test(base_model)
+        with open('train.log', 'a') as f:
+            run_test(base_model, outfile=f)
