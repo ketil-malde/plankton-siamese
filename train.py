@@ -36,7 +36,7 @@ if last==0:
         os.makedirs('models')
     base_model = create_base_network(in_dim)
 else:
-    log('Loading model:'+savename(last))
+    log('Loading model:'+save_name(last))
     base_model = load_model(save_name(last))
 
 model = tripletize(base_model)
