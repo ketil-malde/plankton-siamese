@@ -5,3 +5,5 @@ test_dir  = 'data/test'
 
 batch_size = 20
 logfile    = 'train.log'
+
+learn_rate = 0.01

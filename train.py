@@ -40,11 +40,11 @@ else:
     base_model = load_model(save_name(last))
 
 model = tripletize(base_model)
-model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
+model.compile(optimizer=SGD(lr=C.learn_rate, momentum=0.9),
               loss=std_triplet_loss())
 
 for i in range(last+1, last+11):
-    log('Starting iteration '+str(i))
+    log('Starting iteration '+str(i)+' lr='+str(C.learn_rate))
     train_step()
     base_model.save(save_name(i))
     with open(C.logfile, 'a') as f:
