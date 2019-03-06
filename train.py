@@ -48,9 +48,11 @@ for i in range(last+1, last+11):
     train_step()
     C.learn_rate = C.learn_rate * C.lr_decay
     base_model.save(save_name(i))
-    with open(C.logfile, 'a') as f:
-        T.run_test(base_model, outfile=f)
 
+    vs = T.get_vectors(base_model, C.val_dir)
+    with open(C.logfile, 'a') as f:
+        c = count_nearest_centroid(vs)
+        accuracy_counts(c, outfile=f)
     log('Summarizing '+str(i))
     with open('summarize.'+str(i)+'.log', 'w') as sumfile:
-        T.summarize(T.get_vectors(base_model, C.val_dir), outfile=sumfile)
+        T.summarize(vs, outfile=sumfile)
