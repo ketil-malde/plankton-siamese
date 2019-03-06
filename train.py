@@ -43,9 +43,10 @@ model = tripletize(base_model)
 model.compile(optimizer=SGD(lr=C.learn_rate, momentum=0.9),
               loss=std_triplet_loss())
 
-for i in range(last+1, last+11):
+for i in range(last+1, last+1+C.iterations):
     log('Starting iteration '+str(i)+' lr='+str(C.learn_rate))
     train_step()
+    C.learn_rate = C.learn_rate * C.lr_decay
     base_model.save(save_name(i))
     with open(C.logfile, 'a') as f:
         run_test(base_model, outfile=f)
