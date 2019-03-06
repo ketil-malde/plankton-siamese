@@ -26,7 +26,7 @@ logger = CSVLogger(C.logfile, append=True, separator='\t')
 
 def train_step():
     model.fit_generator(
-        triplet_generator(C.batch_size, None, C.train_dir), steps_per_epoch=1000, epochs=10,
+        triplet_generator(C.batch_size, None, C.train_dir), steps_per_epoch=1000, epochs=C.iterations,
         callbacks=[logger],
         validation_data=triplet_generator(C.batch_size, None, C.val_dir), validation_steps=100)
 
@@ -43,10 +43,11 @@ model = tripletize(base_model)
 model.compile(optimizer=SGD(lr=C.learn_rate, momentum=0.9),
               loss=std_triplet_loss())
 
-for i in range(last+1, last+1+C.iterations):
+for i in range(last+1, last+11):
     log('Starting iteration '+str(i)+' lr='+str(C.learn_rate))
     train_step()
     C.learn_rate = C.learn_rate * C.lr_decay
     base_model.save(save_name(i))
     with open(C.logfile, 'a') as f:
         run_test(base_model, outfile=f)
+    summarize(get_vectors(base_model, C.val_dir), outfile=('summarize.'+str(i)+'.log'))
