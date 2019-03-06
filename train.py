@@ -8,7 +8,7 @@ import os
 
 from create_model import create_base_network, in_dim, tripletize, std_triplet_loss
 from generators import triplet_generator
-from testing import run_test
+import testing as T
 
 import config as C
 
@@ -49,5 +49,5 @@ for i in range(last+1, last+11):
     C.learn_rate = C.learn_rate * C.lr_decay
     base_model.save(save_name(i))
     with open(C.logfile, 'a') as f:
-        run_test(base_model, outfile=f)
-    summarize(get_vectors(base_model, C.val_dir), outfile=('summarize.'+str(i)+'.log'))
+        T.run_test(base_model, outfile=f)
+    T.summarize(T.get_vectors(base_model, C.val_dir), outfile=('summarize.'+str(i)+'.log'))
