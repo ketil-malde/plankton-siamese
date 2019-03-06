@@ -10,9 +10,12 @@ def class_file(model, fname):
     img = np.array(Image.open(fname))/256
     return model.predict(np.expand_dims(paste(img), axis=0))
 
+def dist(x,y):
+    return np.linalg.norm(x-y)
+
 # Calculate histogram of all distances from v in v1 to w in v2
 def dist_hist(v1,v2):
-    return [np.linalg.norm(v-w) for v in v1 for w in v2]
+    return [dist(v,w) for v in v1 for w in v2]
 
 def centroid(vs):
     x0 = np.zeros_like(vs[0])
@@ -30,9 +33,6 @@ def get_vectors(model, tdir=C.test_dir):
            images = os.listdir(os.path.join(tdir,c))
            res[c] = [class_file(model, os.path.join(tdir,c,f)) for f in images]
     return res
-
-def dist(x,y):
-    return np.linalg.norm(x-y)
 
 # radius of a cluster, i.e. average or max distance from centroid
 def radius(c, vs, avg=True):
