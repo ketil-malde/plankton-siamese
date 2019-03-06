@@ -50,4 +50,7 @@ for i in range(last+1, last+11):
     base_model.save(save_name(i))
     with open(C.logfile, 'a') as f:
         T.run_test(base_model, outfile=f)
-    T.summarize(T.get_vectors(base_model, C.val_dir), outfile=('summarize.'+str(i)+'.log'))
+
+    log('Summarizing '+str(i))
+    with open('summarize.'+str(i)+'.log', 'w') as sumfile:
+        T.summarize(T.get_vectors(base_model, C.val_dir), outfile=sumfile)
