@@ -67,7 +67,7 @@ def summarize(vectors, outfile=sys.stdout):
     for c in vectors:
         print(c.ljust(16),' r=%.3f ' % rads[c], end='', file=outfile)
         for n in vectors:
-            print('  %.3f' % np.linalg.norm(cents[c]-cents[n]), end='', file=outfile)
+            print('  %.3f' % dist(cents[c],cents[n]), end='', file=outfile)
         print(file=outfile)
 
 # assign each input to nearest centroid and tally
