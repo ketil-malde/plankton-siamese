@@ -49,15 +49,13 @@ for v in vs:
     cents[v] = T.centroid(vs[v])
 
 for i in range(last+1, last+11):
-    log('Starting iteration '+str(i)+' lr='+str(C.learn_rate))
+    log('Starting iteration '+str(i)+'/'+str(last+11)+' lr='+str(C.learn_rate))
     train_step()
     C.learn_rate = C.learn_rate * C.lr_decay
     base_model.save(save_name(i))
 
     vs = T.get_vectors(base_model, C.val_dir)
     c = T.count_nearest_centroid(vs)
-    with open(C.logfile, 'a') as f:
-        T.accuracy_counts(c, outfile=f)
     log('Summarizing '+str(i))
     with open('summarize.'+str(i)+'.log', 'w') as sumfile:
         T.summarize(vs, outfile=sumfile)
@@ -66,6 +64,14 @@ for i in range(last+1, last+11):
     c_tmp = {}
     for v in vs:
         c_tmp[v] = T.centroid(vs[v])
+        r_tmp[v] = radius(c_tmp[v], vs[v])
+    c_rad = [round(100*r_tmp[v])/100 for v in vs]
     c_mv = [round(100*T.dist(c_tmp[v],cents[v]))/100 for v in vs]
+    log('Centroid radius: '+str(c_rad))
     log('Centroid moved: '+str(c_mv))
     cents = c_tmp
+
+    with open(C.logfile, 'a') as f:
+        T.accuracy_counts(c, outfile=f)
+    # todo: avg cluster radius, avg cluster distances
+    log('Avg centr rad: %.2d move: %.2d' % (avg(c_rad), avg(c_mv)))
