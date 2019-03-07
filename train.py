@@ -12,7 +12,7 @@ import testing as T
 
 import config as C
 
-last = 0
+last = C.last
 
 def save_name(i):
     return ('models/epoch_'+str(i)+'.model')
