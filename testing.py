@@ -103,7 +103,7 @@ def accuracy_counts(cts, outfile=sys.stdout):
         
 def confusion_counts(cts, outfile=sys.stdout):
     for v in cts:
-        print(v.ljust(16),end='')
+        print(v.ljust(16),end='', file=outfile)
         for w in cts:
             print(" %4d" % cts[v][w], end='', file=outfile)
         print(file=outfile)
