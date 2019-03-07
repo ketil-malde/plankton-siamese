@@ -44,7 +44,9 @@ model.compile(optimizer=SGD(lr=C.learn_rate, momentum=0.9),
               loss=std_triplet_loss())
 
 vs = T.get_vectors(base_model, C.val_dir)
-cents = [T.centroid(vs[v]) for v in vs]
+cents = {}
+for v in vs:
+    cents[v] = T.centroid(vs[v])
 
 for i in range(last+1, last+11):
     log('Starting iteration '+str(i)+' lr='+str(C.learn_rate))
@@ -61,7 +63,9 @@ for i in range(last+1, last+11):
         T.summarize(vs, outfile=sumfile)
     with open('clusters.'+str(i)+'.log', 'w') as cfile:
         T.confusion_counts(c, outfile=cfile)
-    c_tmp = [T.centroid(vs[v]) for v in vs]
-    c_mv = [T.dist(a,b) for a in cents for b in c_tmp]
+    c_tmp = {}
+    for v in vs:
+        c_tmp[v] = T.centroid(vs[v])
+    c_mv = [T.dist(c_tmp[v],cents[v]) for v in vs]
     log('Centroid moved: '+str(c_mv))
     cents = c_tmp
