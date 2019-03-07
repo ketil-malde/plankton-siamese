@@ -50,11 +50,11 @@ for i in range(last+1, last+11):
     base_model.save(save_name(i))
 
     vs = T.get_vectors(base_model, C.val_dir)
-    c = count_nearest_centroid(vs)
+    c = T.count_nearest_centroid(vs)
     with open(C.logfile, 'a') as f:
-        accuracy_counts(c, outfile=f)
+        T.accuracy_counts(c, outfile=f)
     log('Summarizing '+str(i))
     with open('summarize.'+str(i)+'.log', 'w') as sumfile:
         T.summarize(vs, outfile=sumfile)
-    with(open('clusters.'+str(i)+'.log', 'w') as cfile:
+    with open('clusters.'+str(i)+'.log', 'w') as cfile:
         T.confusion_counts(c, outfile=cfile)
