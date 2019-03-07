@@ -66,6 +66,6 @@ for i in range(last+1, last+11):
     c_tmp = {}
     for v in vs:
         c_tmp[v] = T.centroid(vs[v])
-    c_mv = [T.dist(c_tmp[v],cents[v]) for v in vs]
+    c_mv = [round(100*T.dist(c_tmp[v],cents[v]))/100 for v in vs]
     log('Centroid moved: '+str(c_mv))
     cents = c_tmp
