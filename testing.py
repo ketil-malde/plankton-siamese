@@ -49,10 +49,10 @@ def centroid_distances(vectors, outfile=sys.stdout):
     for c in vectors:
            ds = dist_hist(vectors[c],vectors[c])
            res[c] = centroid(vectors[c])
-           print(c.ljust(16),' average radius: %.4f worst case diameter: %.4f' % (sum(ds)/len(ds), max(ds)), file=outfile)
+           print(c[:25].ljust(26),' average radius: %.4f worst case diameter: %.4f' % (sum(ds)/len(ds), max(ds)), file=outfile)
     print('\nCentroid distances',file=outfile)
     for c in res:
-        print(c.ljust(16),end=': ', file=outfile)
+        print(c[25].ljust(26),end=': ', file=outfile)
         for n in res:
             print('  %.3f' % (dist(res[c],res[n])), end='', file=outfile)
         print(file=outfile)
@@ -65,7 +65,7 @@ def summarize(vectors, outfile=sys.stdout):
         cents[c] = centroid(vectors[c])
         rads[c] = radius(cents[c], vectors[c])
     for c in vectors:
-        print(c.ljust(16),' r=%.3f ' % rads[c], end='', file=outfile)
+        print(c[:25].ljust(26),' r=%.3f ' % rads[c], end='', file=outfile)
         for n in vectors:
             print('  %.3f' % dist(cents[c],cents[n]), end='', file=outfile)
         print(file=outfile)
@@ -103,7 +103,7 @@ def accuracy_counts(cts, outfile=sys.stdout):
         
 def confusion_counts(cts, outfile=sys.stdout):
     for v in cts:
-        print(v.ljust(16),end='', file=outfile)
+        print(v[:25].ljust(26),end='', file=outfile)
         for w in cts:
             print(" %4d" % cts[v][w], end='', file=outfile)
         print(file=outfile)
