@@ -52,7 +52,7 @@ for v in vs:
     cents[v] = T.centroid(vs[v])
 
 for i in range(last+1, last+11):
-    log('Starting iteration '+str(i)+'/'+str(last+11)+' lr='+str(C.learn_rate))
+    log('Starting iteration '+str(i)+'/'+str(last+10)+' lr='+str(C.learn_rate))
     train_step()
     C.learn_rate = C.learn_rate * C.lr_decay
     base_model.save(save_name(i))
