@@ -44,7 +44,7 @@ model.compile(optimizer=SGD(lr=C.learn_rate, momentum=0.9),
               loss=std_triplet_loss())
 
 def avg(x):
-    sum(x)/len(x)
+    return sum(x)/len(x)
 
 vs = T.get_vectors(base_model, C.val_dir)
 cents = {}
@@ -78,4 +78,4 @@ for i in range(last+1, last+11):
     with open(C.logfile, 'a') as f:
         T.accuracy_counts(c, outfile=f)
     # todo: avg cluster radius, avg cluster distances
-    log('Avg centr rad: %.2d move: %.2d' % (avg(c_rad), avg(c_mv)))
+    log('Avg centr rad: %.2f move: %.2f' % (avg(c_rad), avg(c_mv)))
