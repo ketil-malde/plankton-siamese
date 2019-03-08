@@ -43,6 +43,9 @@ model = tripletize(base_model)
 model.compile(optimizer=SGD(lr=C.learn_rate, momentum=0.9),
               loss=std_triplet_loss())
 
+def avg(x):
+    sum(x)/len(x)
+
 vs = T.get_vectors(base_model, C.val_dir)
 cents = {}
 for v in vs:
@@ -62,9 +65,10 @@ for i in range(last+1, last+11):
     with open('clusters.'+str(i)+'.log', 'w') as cfile:
         T.confusion_counts(c, outfile=cfile)
     c_tmp = {}
+    r_tmp = {}
     for v in vs:
         c_tmp[v] = T.centroid(vs[v])
-        r_tmp[v] = radius(c_tmp[v], vs[v])
+        r_tmp[v] = T.radius(c_tmp[v], vs[v])
     c_rad = [round(100*r_tmp[v])/100 for v in vs]
     c_mv = [round(100*T.dist(c_tmp[v],cents[v]))/100 for v in vs]
     log('Centroid radius: '+str(c_rad))
