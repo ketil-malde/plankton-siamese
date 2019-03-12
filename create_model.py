@@ -1,12 +1,12 @@
 from keras.applications.inception_v3 import InceptionV3
 from keras.models import Sequential, Model, Input, load_model
-from keras.layers import Dense, Activation, Flatten, GlobalAveragePooling2D, Concatenate
+from keras.layers import Dense, Activation, Flatten, GlobalAveragePooling2D, Concatenate, Lambda
 from keras import backend as K
 
 # Load Inception minus the final prediction layer
 
 in_dim = (299,299,3)
-out_dim = 128
+out_dim = 64
 
 def create_base_network(input_dim):
     base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_dim)
